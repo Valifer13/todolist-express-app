@@ -4,3 +4,4 @@ api.http
 pnpm-lock.yaml
 pnpm-workspace.yaml
 .env
+request.rest
