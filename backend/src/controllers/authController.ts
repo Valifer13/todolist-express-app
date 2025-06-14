@@ -1,74 +1,89 @@
 import { Request, Response } from "express"
 import { stdout } from "process";
-import { userDB, User } from "../data/db";
 import * as authService from "../services/authService";
 
-export const login = (req: Request, res: Response) => { 
-  const {email, password} = req.body;
+export const login = async (req: Request, res: Response) => { 
   const ip = req.ip?.substring(7);
 
-  let user: User | undefined = userDB.find(user => user.email === email);
-
-  if (!user) {
-    res.status(404).json({"message": "User not found"});
-    stdout.write(`[INFO] User with IP ${ip} trying to login to non-exist account\n`);
-    return;
-  }
-  
-  if (password !== user.password) {
-    res.status(401).json({"message": "Password Incorrect"})
-    stdout.write(`[INFO] User with IP ${ip} trying to login to "${email}" account\n`);
+  if (
+    req.body === undefined ||
+    req.body.email === undefined ||
+    req.body.password === undefined
+  ) {
+    res
+      .status(400)
+      .json({ message: "Email or password is undefined"});
     return;
   }
 
-  res.status(200).json({"message": "Login successful"})
-  stdout.write(`[INFO] User with email "${email}" login successfully\n`);
+  try {
+    await authService.loginUser(req.body.email, req.body.password);
+    res
+      .status(200)
+      .json({ message: "Login Succesffuly"});
+    stdout.write(`[INFO] ${ip} successfuly login on account ${req.body.email}\n`);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Unkown error occured";
+    const statusCode = e instanceof Error ? 401 : 500;
+    res
+      .status(statusCode)
+      .json({ message });
+    stdout.write(`[INFO] ${ip} trying to login on account ${req.body.email}\n`);
+  }
 }
 
-export const signIn = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response) => {
   const ip = req.ip?.substring(7);
+
+  if (
+    req.body === undefined ||
+    req.body.email === undefined ||
+    req.body.password === undefined ||
+    req.body.username === undefined
+  ) {
+    res
+      .status(400)
+      .json({ message: "Username, email or password is undefined" });
+    return;
+  }
+
   try {
-    const { username, email, password } = req.body;
-
-    if (
-      email === undefined ||
-      password === undefined ||
-      username === undefined
-    ) {
-      res
-        .status(400)
-        .json({ message: "Username, email or password is undefined" });
-      return;
-    }
-
     await authService.registerUser(req.body);
     res.status(200).json({ "message" : "Sign-in successfully" });
-    stdout.write(`[INFO] User with email "${email}" sign in successfully\n`);
-  } catch (err) {
-    res.status(500).json({
-      "message": "Can't sign-in successfully",
-      "error": err
-    });
-    stdout.write(`[ERROR] ${err}\n`);
+    stdout.write(`[INFO] ${ip} register successfully\n`);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Unkown error occured";
+    const statusCode = e instanceof Error ? 409 : 500;
+    res
+      .status(statusCode)
+      .json({ message });
+    stdout.write(`[INFO] ${ip} trying to register\n`);
   }
 }
 
 export const logout = (req: Request, res: Response) => {
-  const { email } = req.body;
   const ip = req.ip?.substring(7);
 
-  if (email === undefined) {
-    res.status(400).json({"message": "Email is undefined"});
+  if (
+    req.body === undefined ||
+    req.body.email === undefined
+  ) {
+    res.status(400).json({message: "Email is undefined"});
     return;
   }
 
-  let user: User | undefined = userDB.find(user => user.email === email);
-
-  if (!user) {
-    res.status(404).json({"message": `Account with email = ${email} doesn't exist`});
-    return;
+  try {
+    authService.logoutUser(req.body.email);
+    res
+      .status(200)
+      .json({message: "Logout successfully"});
+    stdout.write(`[INFO] ${ip} logout from account ${req.body.email}\n`);
+  } catch (e) {
+    const message = e instanceof Error ? e.message : "Unkown error occured";
+    const statusCode = e instanceof Error ? 404 : 500;
+    res
+      .status(statusCode)
+      .json({ message });
+    stdout.write(`[INFO] ${ip} trying to logout from unexisting account\n`);
   }
-
-  res.status(200).json({"message": "Logout successfully"});
-  stdout.write(`[INFO] User with ip ${ip} logout from account ${email}\n`);
 }

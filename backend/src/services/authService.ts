@@ -1,23 +1,47 @@
 import bcrypt from "bcrypt";
 import { User, userDB } from "../data/db";
 
-export const registerUser = async (user: User) => {
+export const registerUser = async (data: User) => {
   let existingUser: User | undefined = userDB.find(
-    (user) => user.email === user.email
+    (user) => user.email === data.email
   );
 
   if (existingUser) {
     throw new Error("User account already exist");
   }
 
-  const hashedPassword = await bcrypt.hash(user.password, 10);
+  const hashedPassword = await bcrypt.hash(data.password, 10);
 
   const userData: User = {
-    username: user.username,
-    email: user.email,
+    username: data.username,
+    email: data.email,
     password: hashedPassword,
   }
 
   const newUser = userDB.push(userData);
   return newUser;
+}
+
+export const loginUser = async (email: string, password: string) => {
+  let user: User | undefined = userDB.find(user => user.email === email);
+
+  if (!user) {
+    throw new Error("User account doesn't exists");
+  }
+  
+  if (!await bcrypt.compare(password, user.password)) {
+    throw new Error("Password incorrect");
+  }
+
+  return true;
+}
+
+export const logoutUser = (email: string) => {
+  let user: User | undefined = userDB.find(user => user.email === email);
+
+  if (!user) {
+    throw new Error(`User with email "${email} doesn't exists"`);
+  }
+
+  return true;
 }
