@@ -1,11 +1,11 @@
 import express from "express";
-import { stdout } from "process";
 import * as userController from "../../controllers/userController";
+import * as authController from "../../controllers/authController";
 
 export const authRouter = express.Router();
 
 // User debug
 authRouter.get("/users", userController.getAllUser);
-authRouter.post("/users/login", userController.login)
-authRouter.post("/users/sign-up", userController.signIn);
-authRouter.post("/users/logout", userController.logout);
+authRouter.post("/users", authController.signIn);
+authRouter.post("/users/login", authController.login)
+authRouter.post("/users/logout", authController.logout);
