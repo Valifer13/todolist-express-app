@@ -7,3 +7,4 @@ export interface User {
 }
 
 export let userDB: User[] = [];
+export let refreshTokenDB: string[] = [];

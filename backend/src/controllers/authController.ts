@@ -17,10 +17,13 @@ export const login = async (req: Request, res: Response) => {
   }
 
   try {
-    await authService.loginUser(req.body.email, req.body.password);
+    const tokens = await authService.loginUser(req.body.email, req.body.password);
     res
       .status(200)
-      .json({ message: "Login Succesffuly"});
+      .json({
+        message: "Login Succesffuly",
+        tokens
+      });
     stdout.write(`[INFO] ${ip} successfuly login on account ${req.body.email}\n`);
   } catch (e) {
     const message = e instanceof Error ? e.message : "Unkown error occured";

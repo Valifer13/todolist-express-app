@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { User, userDB } from "../data/db";
+import { generateAccessToken, generateRefreshToken } from "../utils/token";
 
 export const registerUser = async (data: User) => {
   let existingUser: User | undefined = userDB.find(
@@ -33,7 +34,15 @@ export const loginUser = async (email: string, password: string) => {
     throw new Error("Password incorrect");
   }
 
-  return true;
+  const userData = {
+    username: user.username,
+    email: user.email
+  }
+
+  const accessToken = generateAccessToken(userData);
+  const refreshToken = generateRefreshToken(userData);
+
+  return { accessToken, refreshToken };
 }
 
 export const logoutUser = (email: string) => {
