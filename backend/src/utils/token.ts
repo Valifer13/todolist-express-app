@@ -1,9 +1,9 @@
 import jwt from "jsonwebtoken";
-import { refreshTokenDB } from "../data/db";
 
 interface User {
+  id: number,
   username: string,
-  email: string
+  email: string,
 }
 
 export const generateAccessToken = (user: User) => {
@@ -11,7 +11,5 @@ export const generateAccessToken = (user: User) => {
 }
 
 export const generateRefreshToken = (user: User) => {
-  const refreshKey = jwt.sign(user, process.env.REFRESH_SECRET_KEY!);
-  refreshTokenDB.push(refreshKey);
-  return refreshKey;
+  return jwt.sign(user, process.env.REFRESH_SECRET_KEY!, { expiresIn: "1d" });
 }

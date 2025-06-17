@@ -1,11 +1,14 @@
 import bcrypt from "bcrypt";
-import { User, userDB } from "../data/db";
 import { generateAccessToken, generateRefreshToken } from "../utils/token";
+import * as userModel from "../models/userModel";
+import prisma from "../prisma/client";
 
-export const registerUser = async (data: User) => {
-  let existingUser: User | undefined = userDB.find(
-    (user) => user.email === data.email
-  );
+export const registerUser = async (data: {
+  username: string;
+  email: string;
+  password: string;
+}) => {
+  const existingUser = await userModel.getUserByEmail(data.email);
 
   if (existingUser) {
     throw new Error("User account already exist");
@@ -13,44 +16,50 @@ export const registerUser = async (data: User) => {
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
 
-  const userData: User = {
+  const user = await userModel.createUser({
     username: data.username,
     email: data.email,
     password: hashedPassword,
-  }
+  });
 
-  const newUser = userDB.push(userData);
-  return newUser;
-}
+  return user;
+};
 
 export const loginUser = async (email: string, password: string) => {
-  let user: User | undefined = userDB.find(user => user.email === email);
+  const user = await userModel.getUserByEmail(email);
 
   if (!user) {
     throw new Error("User account doesn't exists");
   }
-  
-  if (!await bcrypt.compare(password, user.password)) {
+
+  if (!(await bcrypt.compare(password, user.password))) {
     throw new Error("Password incorrect");
   }
 
   const userData = {
+    id: user.id,
     username: user.username,
-    email: user.email
-  }
+    email: user.email,
+  };
 
   const accessToken = generateAccessToken(userData);
   const refreshToken = generateRefreshToken(userData);
 
-  return { accessToken, refreshToken };
-}
+  await prisma.rememberToken.create({
+    data: {
+      token: refreshToken,
+    },
+  });
 
-export const logoutUser = (email: string) => {
-  let user: User | undefined = userDB.find(user => user.email === email);
+  return { accessToken, refreshToken };
+};
+
+export const logoutUser = async (id: number) => {
+  const user = await userModel.getUserById(id);
 
   if (!user) {
-    throw new Error(`User with email "${email} doesn't exists"`);
+    throw new Error(`User with id "${id} doesn't exists"`);
   }
 
   return true;
-}
+};

@@ -1,9 +1,9 @@
 import express from 'express';
 
-export const taskRouter = express.Router();
+export const todoRouter = express.Router();
 
 // Debug only
-const tasks = [
+const todos = [
   {
     title: "Todo 1",
     user: "user",
@@ -18,11 +18,11 @@ const tasks = [
   },
 ]
 
-taskRouter.get('/tasks', (req, res) => {
+todoRouter.get('/todos', (req, res) => {
   res
     .status(200)
     .json({ 
       message: "Retrieve all tasks from all users",
-      data: tasks
+      data: todos
      });
 })

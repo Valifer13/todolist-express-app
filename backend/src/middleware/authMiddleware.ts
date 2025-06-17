@@ -19,7 +19,7 @@ export const authenticateTokenMiddleware = (req: Request, res: Response, next: N
       res
         .status(403)
         .json({ message: "Invalid token" });
-      return
+      return;
     }
 
     req.user = user;

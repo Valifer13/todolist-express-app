@@ -1,20 +1,16 @@
 import { Request, Response } from "express"
 import { stdout } from "process";
 import * as authService from "../services/authService";
+import { validationResult } from "express-validator";
 
 export const login = async (req: Request, res: Response) => { 
-  const ip = req.ip?.substring(7);
-
-  if (
-    req.body === undefined ||
-    req.body.email === undefined ||
-    req.body.password === undefined
-  ) {
-    res
-      .status(400)
-      .json({ message: "Email or password is undefined"});
+  const result = validationResult(req);
+  if (!result.isEmpty()) {
+    res.status(400).json({ errors: result})
     return;
   }
+  
+  const ip = req.ip?.substring(7);
 
   try {
     const tokens = await authService.loginUser(req.body.email, req.body.password);
@@ -36,19 +32,13 @@ export const login = async (req: Request, res: Response) => {
 }
 
 export const register = async (req: Request, res: Response) => {
-  const ip = req.ip?.substring(7);
-
-  if (
-    req.body === undefined ||
-    req.body.email === undefined ||
-    req.body.password === undefined ||
-    req.body.username === undefined
-  ) {
-    res
-      .status(400)
-      .json({ message: "Username, email or password is undefined" });
+  const result = validationResult(req);
+  if (!result.isEmpty()) {
+    res.status(400).json({ errors: result})
     return;
   }
+
+  const ip = req.ip?.substring(7);
 
   try {
     await authService.registerUser(req.body);
@@ -65,15 +55,13 @@ export const register = async (req: Request, res: Response) => {
 }
 
 export const logout = (req: Request, res: Response) => {
-  const ip = req.ip?.substring(7);
-
-  if (
-    req.body === undefined ||
-    req.body.email === undefined
-  ) {
-    res.status(400).json({message: "Email is undefined"});
+  const result = validationResult(req);
+  if (!result.isEmpty()) {
+    res.status(400).json({ errors: result})
     return;
   }
+
+  const ip = req.ip?.substring(7);
 
   try {
     authService.logoutUser(req.body.email);
