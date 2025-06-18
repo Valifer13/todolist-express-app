@@ -10,10 +10,10 @@ export const login = async (req: Request, res: Response) => {
     return;
   }
   
-  const ip = req.ip?.substring(7);
+  const ip = req.ip;
 
   try {
-    const tokens = await authService.loginUser(req.body.email, req.body.password);
+    const tokens = await authService.loginUser(req, req.body.email, req.body.password);
     res
       .status(200)
       .json({

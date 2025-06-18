@@ -1,6 +1,5 @@
-import { userDB } from "../data/db"
+import * as userModel from "../models/userModel";
 
-export const allUsers = () => {
-  const users = userDB;
-  return users;
+export const allUsers = async () => {
+  return userModel.getAllUser();
 }

@@ -2,6 +2,8 @@ import bcrypt from "bcrypt";
 import { generateAccessToken, generateRefreshToken } from "../utils/token";
 import * as userModel from "../models/userModel";
 import prisma from "../prisma/client";
+import { Request } from "express";
+import { encodePayload } from "../utils/encodeDecode";
 
 export const registerUser = async (data: {
   username: string;
@@ -25,7 +27,7 @@ export const registerUser = async (data: {
   return user;
 };
 
-export const loginUser = async (email: string, password: string) => {
+export const loginUser = async (req: Request, email: string, password: string) => {
   const user = await userModel.getUserByEmail(email);
 
   if (!user) {
@@ -43,13 +45,27 @@ export const loginUser = async (email: string, password: string) => {
   };
 
   const accessToken = generateAccessToken(userData);
-  const refreshToken = generateRefreshToken(userData);
+  const refreshToken = generateRefreshToken();
 
-  await prisma.rememberToken.create({
+  const payload = {
+    userId: user.id,
+    username: user.username,
+    role: 'user',
+    issuedAt: Date.now(),
+    userAgent: req.headers['user-agent'],
+    ipAddress: req.ip
+  }
+
+  await prisma.session.create({
     data: {
-      token: refreshToken,
-    },
-  });
+      userId: userData.id,
+      ipAddress: req.ip || '',
+      userAgent: req.get("User-Agent") || '',
+      payload: encodePayload(payload),
+      refreshToken,
+      expiresAt: new Date(Date.now() + 1000 * 60 * 24 * 7)
+    }
+  })
 
   return { accessToken, refreshToken };
 };

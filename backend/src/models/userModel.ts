@@ -7,6 +7,11 @@ interface UserInterface {
   password: string
 }
 
+// Debug only
+export const getAllUser = async () => {
+  return prisma.user.findMany();
+}
+
 export const createUser = async (userData: UserInterface): Promise<User> => {
   return prisma.user.create({
     data: {
