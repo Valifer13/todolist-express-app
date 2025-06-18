@@ -7,7 +7,7 @@ export const v1 = express.Router();
 
 v1.use(authRouter);
 
-// Middleware auth;
+// Middleware auth
 v1.use(authenticateTokenMiddleware);
 
 v1.use(todoRouter);

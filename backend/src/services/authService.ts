@@ -27,7 +27,11 @@ export const registerUser = async (data: {
   return user;
 };
 
-export const loginUser = async (req: Request, email: string, password: string) => {
+export const loginUser = async (
+  req: Request,
+  email: string,
+  password: string
+) => {
   const user = await userModel.getUserByEmail(email);
 
   if (!user) {
@@ -38,44 +42,34 @@ export const loginUser = async (req: Request, email: string, password: string) =
     throw new Error("Password incorrect");
   }
 
-  const userData = {
+  const payload = {
     id: user.id,
-    username: user.username,
-    email: user.email,
+    role: "user",
+    issuedAt: Date.now(),
+    userAgent: req.headers["user-agent"],
   };
 
-  const accessToken = generateAccessToken(userData);
+  const accessToken = generateAccessToken(payload);
   const refreshToken = generateRefreshToken();
-
-  const payload = {
-    userId: user.id,
-    username: user.username,
-    role: 'user',
-    issuedAt: Date.now(),
-    userAgent: req.headers['user-agent'],
-    ipAddress: req.ip
-  }
 
   await prisma.session.create({
     data: {
-      userId: userData.id,
-      ipAddress: req.ip || '',
-      userAgent: req.get("User-Agent") || '',
+      userId: user.id,
+      ipAddress: req.ip || "",
+      userAgent: req.get("User-Agent") || "",
       payload: encodePayload(payload),
       refreshToken,
-      expiresAt: new Date(Date.now() + 1000 * 60 * 24 * 7)
-    }
-  })
+      expiresAt: new Date(Date.now() + 1000 * 60 * 24 * 7),
+    },
+  });
 
   return { accessToken, refreshToken };
 };
 
-export const logoutUser = async (id: number) => {
-  const user = await userModel.getUserById(id);
-
-  if (!user) {
-    throw new Error(`User with id "${id} doesn't exists"`);
-  }
-
-  return true;
+export const logoutUser = async (refreshToken: string) => {
+  return prisma.session.deleteMany({
+    where: {
+      refreshToken,
+    },
+  });
 };

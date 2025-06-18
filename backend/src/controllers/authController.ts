@@ -38,7 +38,7 @@ export const register = async (req: Request, res: Response) => {
     return;
   }
 
-  const ip = req.ip?.substring(7);
+  const ip = req.ip;
 
   try {
     await authService.registerUser(req.body);
@@ -54,17 +54,17 @@ export const register = async (req: Request, res: Response) => {
   }
 }
 
-export const logout = (req: Request, res: Response) => {
+export const logout = async (req: Request, res: Response) => {
   const result = validationResult(req);
   if (!result.isEmpty()) {
     res.status(400).json({ errors: result})
     return;
   }
 
-  const ip = req.ip?.substring(7);
+  const ip = req.ip;
 
   try {
-    authService.logoutUser(req.body.email);
+    await authService.logoutUser(req.body.refreshToken);
     res
       .status(200)
       .json({message: "Logout successfully"});

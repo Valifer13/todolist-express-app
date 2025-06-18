@@ -30,7 +30,7 @@ authRouter.post(
   "/users/login",
   [
     body("email").isEmail().withMessage("Invalid email"),
-    body("password").notEmpty().withMessage("Password can't empty")
+    body("password").notEmpty().withMessage("Password can't be empty")
   ],
   authController.login
 );
@@ -38,7 +38,7 @@ authRouter.post(
 authRouter.post(
   "/users/logout",
   [
-    body("email").isEmail().withMessage("Invalid email"),
+    body("refreshToken").notEmpty().withMessage("Refresh token can't be empty"),
   ],
   authController.logout
 );
