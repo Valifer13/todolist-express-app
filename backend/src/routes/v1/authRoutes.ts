@@ -44,9 +44,9 @@ authRouter.post(
 );
 
 authRouter.post(
-  "/users/refresh-token",
+  "/users/token",
   [
-    body("refreshToken").notEmpty().withMessage("Refresh token can't be empty"),
+    body("token").notEmpty().withMessage("Refresh token can't be empty"),
   ],
   authController.refreshTokenController
 )

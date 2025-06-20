@@ -73,3 +73,27 @@ export const logoutUserService = async (refreshToken: string) => {
     },
   });
 };
+
+export const refreshTokenService = async (req: Request, token: string) => {
+  const session = await prisma.session.findFirst({
+    where: {
+      refreshToken: token
+    },
+    include: {
+      user: true
+    }
+  })
+  
+  if (!session) {
+    throw new Error("Session with given refresh token does not exist");
+  }
+
+  const payload = {
+    id: session.user.id,
+    role: "user",
+    issuedAt: Date.now(),
+    userAgent: req.headers["user-agent"],
+  };
+
+  return generateAccessToken(payload);
+}

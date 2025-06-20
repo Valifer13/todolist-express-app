@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { v1 } from "./routes/v1/routes";
+import { v1Router } from "./routes/v1/routes";
 
 export const app = express();
 
@@ -12,4 +12,4 @@ app.get('/', (req: Request, res: Response) => {
   res.json({ "message": "Welcome to the Express + Typescript Server!" });
 })
 
-app.use('/api/v1', v1);
+app.use('/api/v1', v1Router);

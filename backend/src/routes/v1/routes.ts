@@ -4,12 +4,12 @@ import { todoRouter } from "./todoRoutes";
 import { authenticateTokenMiddleware } from "../../middleware/authMiddleware";
 import { responseLoggerMiddleware } from "../../middleware/responseLogger";
 
-export const v1 = express.Router();
+export const v1Router = express.Router();
 
-v1.use(responseLoggerMiddleware);
-v1.use(authRouter);
+v1Router.use(responseLoggerMiddleware);
+v1Router.use(authRouter);
 
 // Middleware auth
-v1.use(authenticateTokenMiddleware);
+v1Router.use(authenticateTokenMiddleware);
 
-v1.use(todoRouter);
+v1Router.use(todoRouter);

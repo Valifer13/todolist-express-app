@@ -26,7 +26,7 @@ export const loginController = async (req: Request, res: Response) => {
       success: true,
       message: "Successfuly login",
       data: {
-        token: tokens
+        tokens
       }
     });
   } catch (e) {
@@ -106,7 +106,7 @@ export const logoutController = async (req: Request, res: Response) => {
   }
 };
 
-export const refreshTokenController = (req: Request, res: Response) => {
+export const refreshTokenController = async (req: Request, res: Response) => {
   const result = validationResult(req);
   if (!result.isEmpty()) {
     sendResponse(res, 400, {
@@ -119,8 +119,23 @@ export const refreshTokenController = (req: Request, res: Response) => {
   }
 
   try {
-    
+    const accessToken = await authService.refreshTokenService(req, req.body.token);
+    sendResponse(res, 200, {
+      success: true,
+      message: "Successfully create new access token",
+      data: {
+        accessToken
+      }
+    })
   } catch(e) {
-
+    const message = e instanceof Error ? e.message : "Unkown error occured";
+    const statusCode = e instanceof Error ? 404 : 500;
+    sendResponse(res, statusCode, {
+      success: false,
+      message,
+      error: {
+        errors: e,
+      }
+    })
   }
 }
