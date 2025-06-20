@@ -5,7 +5,7 @@ import prisma from "../prisma/client";
 import { Request } from "express";
 import { encodePayload } from "../utils/encodeDecode";
 
-export const registerUser = async (data: {
+export const registerUserService = async (data: {
   username: string;
   email: string;
   password: string;
@@ -27,7 +27,7 @@ export const registerUser = async (data: {
   return user;
 };
 
-export const loginUser = async (
+export const loginUserService = async (
   req: Request,
   email: string,
   password: string
@@ -66,7 +66,7 @@ export const loginUser = async (
   return { accessToken, refreshToken };
 };
 
-export const logoutUser = async (refreshToken: string) => {
+export const logoutUserService = async (refreshToken: string) => {
   return prisma.session.deleteMany({
     where: {
       refreshToken,

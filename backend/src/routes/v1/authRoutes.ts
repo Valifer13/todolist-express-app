@@ -6,7 +6,7 @@ import { body } from "express-validator";
 export const authRouter = express.Router();
 
 // User debug
-authRouter.get("/users", userController.getAllUser);
+authRouter.get("/users", userController.getAllUserController);
 
 authRouter.post(
   "/users/register", 
@@ -23,7 +23,7 @@ authRouter.post(
       return value === req.body.password;
     }).withMessage("Password confirmation doesn't match with password"),
   ], 
-  authController.register
+  authController.registerController
 );
 
 authRouter.post(
@@ -32,7 +32,7 @@ authRouter.post(
     body("email").isEmail().withMessage("Invalid email"),
     body("password").notEmpty().withMessage("Password can't be empty")
   ],
-  authController.login
+  authController.loginController
 );
 
 authRouter.post(
@@ -40,5 +40,13 @@ authRouter.post(
   [
     body("refreshToken").notEmpty().withMessage("Refresh token can't be empty"),
   ],
-  authController.logout
+  authController.logoutController
 );
+
+authRouter.post(
+  "/users/refresh-token",
+  [
+    body("refreshToken").notEmpty().withMessage("Refresh token can't be empty"),
+  ],
+  authController.refreshTokenController
+)

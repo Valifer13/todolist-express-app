@@ -69,14 +69,14 @@ model Todo {
 }
 
 model Session {
-  id     Int  @id @default(autoincrement())
-  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId Int
-  ipAddress String
-  userAgent String
-  payload String
-  refreshToken String
-  expiresAt DateTime
+  id            Int      @id @default(autoincrement())
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        Int
+  ipAddress     String
+  userAgent     String
+  payload       String
+  refreshToken  String
+  expiresAt     DateTime
   last_activity DateTime @default(now())
 
   @@index([userId])

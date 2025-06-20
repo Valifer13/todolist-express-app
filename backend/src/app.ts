@@ -6,6 +6,7 @@ export const app = express();
 // Middleware
 app.use(express.json());
 app.set('trust proxy', true);
+app.disable('x-powered-by');
 
 app.get('/', (req: Request, res: Response) => {
   res.json({ "message": "Welcome to the Express + Typescript Server!" });

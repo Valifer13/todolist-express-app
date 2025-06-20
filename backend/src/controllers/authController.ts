@@ -1,80 +1,126 @@
-import { Request, Response } from "express"
-import { stdout } from "process";
+import { Request, Response } from "express";
 import * as authService from "../services/authService";
 import { validationResult } from "express-validator";
+import { sendResponse } from "../utils/response";
 
-export const login = async (req: Request, res: Response) => { 
+export const loginController = async (req: Request, res: Response) => {
   const result = validationResult(req);
   if (!result.isEmpty()) {
-    res.status(400).json({ errors: result})
+    sendResponse(res, 400, {
+      success: false,
+      message: "Failed to login",
+      error: {
+        errors: result,
+      }
+    })
     return;
   }
-  
-  const ip = req.ip;
 
   try {
-    const tokens = await authService.loginUser(req, req.body.email, req.body.password);
-    res
-      .status(200)
-      .json({
-        message: "Login Succesffuly",
-        tokens
-      });
-    stdout.write(`[INFO] ${ip} successfuly login on account ${req.body.email}\n`);
+    const tokens = await authService.loginUserService(
+      req,
+      req.body.email,
+      req.body.password
+    );
+    sendResponse(res, 200, {
+      success: true,
+      message: "Successfuly login",
+      data: {
+        token: tokens
+      }
+    });
   } catch (e) {
     const message = e instanceof Error ? e.message : "Unkown error occured";
     const statusCode = e instanceof Error ? 401 : 500;
-    res
-      .status(statusCode)
-      .json({ message });
-    stdout.write(`[INFO] ${ip} trying to login on account ${req.body.email}\n`);
+    sendResponse(res, statusCode, {
+      success: false,
+      message,
+      error: {
+        errors: e,
+      }
+    })
   }
-}
+};
 
-export const register = async (req: Request, res: Response) => {
+export const registerController = async (req: Request, res: Response) => {
   const result = validationResult(req);
   if (!result.isEmpty()) {
-    res.status(400).json({ errors: result})
+    sendResponse(res, 400, {
+      success: false,
+      message: "Failed to register",
+      error: {
+        errors: result
+      }
+    })
     return;
   }
 
-  const ip = req.ip;
-
   try {
-    await authService.registerUser(req.body);
-    res.status(200).json({ "message" : "Sign-in successfully" });
-    stdout.write(`[INFO] ${ip} register successfully\n`);
+    await authService.registerUserService(req.body);
+    sendResponse(res, 200, {
+      success: true,
+      message: "Successfully register"
+    })
   } catch (e) {
     const message = e instanceof Error ? e.message : "Unkown error occured";
     const statusCode = e instanceof Error ? 409 : 500;
-    res
-      .status(statusCode)
-      .json({ message });
-    stdout.write(`[INFO] ${ip} trying to register\n`);
+    sendResponse(res, statusCode, {
+      success: false,
+      message,
+      error: {
+        errors: e,
+      }
+    })
   }
-}
+};
 
-export const logout = async (req: Request, res: Response) => {
+export const logoutController = async (req: Request, res: Response) => {
   const result = validationResult(req);
   if (!result.isEmpty()) {
-    res.status(400).json({ errors: result})
+    sendResponse(res, 400, {
+      success: false,
+      message: "Failed to logout from accont",
+      error: {
+        errors: result
+      }
+    })
     return;
   }
 
-  const ip = req.ip;
-
   try {
-    await authService.logoutUser(req.body.refreshToken);
-    res
-      .status(200)
-      .json({message: "Logout successfully"});
-    stdout.write(`[INFO] ${ip} logout from account ${req.body.email}\n`);
+    await authService.logoutUserService(req.body.refreshToken);
+    sendResponse(res, 200, {
+      success: true,
+      message: "Successfuly logout from account"
+    })
   } catch (e) {
     const message = e instanceof Error ? e.message : "Unkown error occured";
     const statusCode = e instanceof Error ? 404 : 500;
-    res
-      .status(statusCode)
-      .json({ message });
-    stdout.write(`[INFO] ${ip} trying to logout from unexisting account\n`);
+    sendResponse(res, statusCode, {
+      success: false,
+      message,
+      error: {
+        errors: e,
+      }
+    })
+  }
+};
+
+export const refreshTokenController = (req: Request, res: Response) => {
+  const result = validationResult(req);
+  if (!result.isEmpty()) {
+    sendResponse(res, 400, {
+      success: false,
+      message: "Failed to refresh the token",
+      error: {
+        errors: result,
+      }
+    })
+  }
+
+  try {
+    
+  } catch(e) {
+
   }
 }

@@ -1,5 +1,5 @@
 import * as userModel from "../models/userModel";
 
-export const allUsers = async () => {
+export const allUsersService = async () => {
   return userModel.getAllUser();
 }
