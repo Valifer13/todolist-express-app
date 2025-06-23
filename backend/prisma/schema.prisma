@@ -56,6 +56,7 @@ model Category {
 model Todo {
   id          Int       @id @default(autoincrement())
   name        String
+  uuid        String    @unique
   description String?
   status      Status    @default(PENDING)
   dueDate     DateTime?
@@ -64,8 +65,8 @@ model Todo {
   updatedAt   DateTime  @updatedAt
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
-  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  categoryId  Int
+  category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  categoryId  Int?
 }
 
 model Session {
