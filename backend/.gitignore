@@ -6,3 +6,4 @@ pnpm-workspace.yaml
 .env
 request.rest
 /src/generated/prisma
+task.txt

@@ -51,6 +51,8 @@ model Category {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int
   todos     Todo[]
+  
+  @@index([userId])
 }
 
 model Todo {
@@ -67,6 +69,8 @@ model Todo {
   userId      Int
   category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   categoryId  Int?
+
+  @@index([id, uuid])
 }
 
 model Session {

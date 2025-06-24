@@ -1,7 +1,7 @@
 import { User } from "../generated/prisma";
 import prisma from "../prisma/client";
 
-interface UserInterface {
+export type UserType = {
   username: string;
   email: string;
   password: string;
@@ -12,7 +12,7 @@ export const getAllUser = async () => {
   return prisma.user.findMany();
 };
 
-export const createUser = async (userData: UserInterface): Promise<User> => {
+export const createUser = async (userData: UserType): Promise<User> => {
   return prisma.user.create({
     data: {
       username: userData.username,

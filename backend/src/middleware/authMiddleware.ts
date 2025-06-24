@@ -19,11 +19,9 @@ export const authenticateTokenMiddleware = async (
     return;
   }
 
-  const secretToken = process.env.ACCESS_SECRET_KEY!;
-
   try {
+    const secretToken = process.env.ACCESS_SECRET_KEY!;
     const decoded = jwt.verify(token, secretToken) as { id: number };
-
     const user = await userModel.getUserById(decoded.id);
 
     if (!user) {

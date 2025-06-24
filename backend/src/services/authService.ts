@@ -88,6 +88,10 @@ export const refreshTokenService = async (req: Request, token: string) => {
     throw new Error("Session with given refresh token does not exist");
   }
 
+  if (session.expiresAt.getTime() < Date.now()) {
+    throw new Error("Session already expired");
+  }
+
   const payload = {
     id: session.user.id,
     role: "user",

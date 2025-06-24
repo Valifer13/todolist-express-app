@@ -10,6 +10,13 @@ type ApiResponse = {
   error?: any;
 }
 
+/**
+ * Send response with structured data.
+ * @param res Express response.
+ * @param statusCode Status code number.
+ * @param options Options to set response content.
+ * @returns Response with json object.
+ */
 export const sendResponse = (res: Response, statusCode: number, options: Omit<ApiResponse, 'id' | 'apiVersion'>) => {
   const response: ApiResponse = {
     apiVersion: process.env.API_VERSION!,

@@ -1,28 +1,31 @@
 import express from 'express';
+import * as todoController from "../../controllers/todoController";
+import { body } from 'express-validator';
 
 export const todoRouter = express.Router();
 
-// Debug only
-const todos = [
-  {
-    title: "Todo 1",
-    user: "user",
-  },
-  {
-    title: "Todo 2",
-    user: "admin",
-  },
-  {
-    title: "Todo 3",
-    user: "admin",
-  },
-]
+todoRouter.get('/todos', todoController.getAll);
 
-todoRouter.get('/todos', (req, res) => {
-  res
-    .status(200)
-    .json({ 
-      message: "Retrieve all tasks from all users",
-      data: todos
-     });
-})
+todoRouter.post('/todos',
+  [
+    body("name")
+      .notEmpty()
+      .trim()
+      .escape(),
+    body("description")
+      .trim()
+      .escape(),
+    body("status")
+      .notEmpty()
+      .trim()
+      .escape(),
+    body("dueDate")
+      .isDate(),
+    body("priority")
+      .notEmpty()
+      .trim()
+      .escape(),
+    body("categoryId")
+      .isNumeric(),
+  ],
+  todoController.create);

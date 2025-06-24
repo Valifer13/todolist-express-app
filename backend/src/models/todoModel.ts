@@ -3,7 +3,7 @@ import prisma from "../prisma/client";
 type Status = "PENDING" | "IN_PROGRESS" | "COMPLETE" | "CANCELED";
 type Priority = "LOW" | "MEDIUM" | "HIGH";
 
-interface TodoInterface {
+export type TodoType = {
   name: string;
   uuid: string;
   description?: string;
@@ -22,13 +22,13 @@ export const getAllTodoByUserId = async (id: number) => {
   });
 };
 
-export const createTodo = async (data: TodoInterface) => {
+export const createTodo = async (data: TodoType) => {
   return prisma.todo.create({
     data,
   });
 };
 
-export const createManyTodo = async (data: TodoInterface[]) => {
+export const createManyTodo = async (data: TodoType[]) => {
   return prisma.todo.createMany({
     data,
   });
@@ -50,7 +50,7 @@ export const getTodoByUuid = async (uuid: string) => {
   });
 };
 
-export const updateTodoById = async (data: TodoInterface, id: number) => {
+export const updateTodoById = async (data: TodoType, id: number) => {
   return prisma.todo.update({
     where: {
       id,
@@ -59,11 +59,27 @@ export const updateTodoById = async (data: TodoInterface, id: number) => {
   });
 };
 
-export const updateTodoByUuid = async (data: TodoInterface, uuid: string) => {
+export const updateTodoByUuid = async (data: TodoType, uuid: string) => {
   return prisma.todo.update({
     where: {
       uuid,
     },
     data,
+  });
+};
+
+export const deleteTodoById = async (id: number) => {
+  return prisma.todo.delete({
+    where: {
+      id,
+    },
+  });
+};
+
+export const deleteTodoByUuid = async (uuid: string) => {
+  return prisma.todo.delete({
+    where: {
+      uuid,
+    },
   });
 };
