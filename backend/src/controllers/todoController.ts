@@ -8,7 +8,9 @@ export const getAll = async (req: Request, res: Response) => {
   sendResponse(res, 200, {
     success: true,
     message: `Retrieve all todos with userId = ${req.user.id}`,
-    data: todos
+    data: {
+      todos,
+    }
   });
 }
 
@@ -23,7 +25,9 @@ export const getByUuid = async (req: Request, res: Response) => {
   sendResponse(res, 200, {
     success: true,
     message: `Retrieve todo with uuid = ${req.params.uuid}`,
-    data: todo
+    data: {
+      todo,
+    }
   });
 }
 
@@ -43,7 +47,9 @@ export const create = async (req: Request, res: Response) => {
     sendResponse(res, 201, {
       success: true,
       message: "New todo created",
-      data: todo
+      data: {
+        createdTodo: todo,
+      }
     });
   } catch (e) {
     sendResponse(res, res.statusCode, {
@@ -58,7 +64,9 @@ export const create = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
   try {
-    const todo = await todoService.updateTodo({
+    const currentTodo = await todoService.getTodo(req.params.uuid);
+
+    const updatedTodo = await todoService.updateTodo({
       name: req.body.name,
       uuid: uuidv4(),
       description: req.body.description,
@@ -72,7 +80,10 @@ export const update = async (req: Request, res: Response) => {
     sendResponse(res, 200, {
       success: true,
       message: "Todo updated successfully",
-      data: todo
+      data: {
+        currentTodo,
+        updatedTodo
+      }
     })
   } catch (e) {
     sendResponse(res, res.statusCode, {

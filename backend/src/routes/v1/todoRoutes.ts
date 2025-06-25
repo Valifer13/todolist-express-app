@@ -6,6 +6,8 @@ export const todoRouter = express.Router();
 
 todoRouter.get('/todos', todoController.getAll);
 
+todoRouter.get('/todos/:uuid', todoController.getByUuid);
+
 todoRouter.post('/todos',
   [
     body("name")
@@ -28,4 +30,32 @@ todoRouter.post('/todos',
     body("categoryId")
       .isNumeric(),
   ],
-  todoController.create);
+  todoController.create
+);
+
+todoRouter.put('/todos/:uuid',
+  [
+    body("name")
+      .notEmpty()
+      .trim()
+      .escape(),
+    body("description")
+      .trim()
+      .escape(),
+    body("status")
+      .notEmpty()
+      .trim()
+      .escape(),
+    body("dueDate")
+      .isDate(),
+    body("priority")
+      .notEmpty()
+      .trim()
+      .escape(),
+    body("categoryId")
+      .isNumeric(),
+  ],
+  todoController.update
+);
+
+todoRouter.delete('/todos/:uuid', todoController.remove);
