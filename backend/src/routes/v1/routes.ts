@@ -3,6 +3,7 @@ import { authRouter } from "./authRoutes";
 import { todoRouter } from "./todoRoutes";
 import { authenticateTokenMiddleware } from "../../middleware/authMiddleware";
 import { responseLoggerMiddleware } from "../../middleware/responseLogger";
+import { categoryRouter } from "./categoryRoutes";
 
 export const v1Router = express.Router();
 
@@ -13,3 +14,4 @@ v1Router.use(authRouter);
 v1Router.use(authenticateTokenMiddleware);
 
 v1Router.use(todoRouter);
+v1Router.use(categoryRouter);

@@ -59,7 +59,7 @@ export const loginUserService = async (
       userAgent: req.get("User-Agent") || "",
       payload: encodePayload(payload),
       refreshToken,
-      expiresAt: new Date(Date.now() + 1000 * 60 * 24 * 7),
+      expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     },
   });
 

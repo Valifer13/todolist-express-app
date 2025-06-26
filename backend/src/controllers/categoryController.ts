@@ -1,56 +1,51 @@
 import { Request, Response } from "express";
-import { v4 as uuidv4 } from "uuid";
-import * as todoService from "../services/todoService";
+import * as categoryService from "../services/categoryService";
 import { sendResponse } from "../utils/response";
+import { v4 as uuidv4 } from "uuid";
 
 export const getAll = async (req: Request, res: Response) => {
-  const todos = await todoService.getAllTodo(req.user.id);
+  const categories = await categoryService.getAllCategory(req.user.id);
   sendResponse(res, 200, {
     success: true,
-    message: `Retrieve all todos with userId = ${req.user.id}`,
+    message: `Retrieve all categories with userId = ${req.user.id}`,
     data: {
-      todos,
-    }
+      categories,
+    },
   });
 }
 
 export const getByUuid = async (req: Request, res: Response) => {
-  const todo = await todoService.getTodo(req.params.uuid);
-  if (!todo) {
+  const category = await categoryService.getCategory(req.params.uuid);
+  if (!category) {
     sendResponse(res, 404, {
       success: false,
-      message: "Todo not found!",
+      message: `Category with uuid = ${req.params.uuid} not found`
     })
   }
+
   sendResponse(res, 200, {
     success: true,
-    message: `Retrieve todo with uuid = ${req.params.uuid}`,
+    message: `Get category with uuid = ${req.params.uuid}`,
     data: {
-      todo,
+      category
     }
-  });
+  })
 }
 
 export const create = async (req: Request, res: Response) => {
   try {
-    const todo = await todoService.createTodo({
+    const category = await categoryService.createCategory({
       name: req.body.name,
       uuid: uuidv4(),
-      description: req.body.description,
-      status: req.body.status,
-      dueDate: req.body.dueDate,
-      priority: req.body.priority,
-      categoryId: req.body.categoryId,
       userId: req.user.id
     })
-
     sendResponse(res, 201, {
       success: true,
-      message: "New todo created",
+      message: "Category created",
       data: {
-        createdTodo: todo,
+        category
       }
-    });
+    })
   } catch (e) {
     sendResponse(res, res.statusCode, {
       success: false,
@@ -64,35 +59,30 @@ export const create = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
   try {
-    const currentTodo = await todoService.getTodo(req.params.uuid);
+    const currentCategory = await categoryService.getCategory(req.params.uuid);
 
-    if (!currentTodo) {
-      throw new Error(`Todo with uuid = ${req.params.uuid} not found`)
+    if (!currentCategory) {
+      throw new Error(`Category with uuid = ${req.params.uuid} not found`);
     }
 
-    const updatedTodo = await todoService.updateTodo({
+    const updatedCategory = await categoryService.updateCategory({
       name: req.body.name,
-      uuid: currentTodo!.uuid,
-      description: req.body.description,
-      status: req.body.status,
-      dueDate: req.body.dueDate,
-      priority: req.body.priority,
-      categoryId: req.body.categoryId,
+      uuid: currentCategory.uuid,
       userId: req.user.id
     }, req.params.uuid)
 
     sendResponse(res, 200, {
       success: true,
-      message: "Todo updated successfully",
+      message: `Category with uuid = ${req.params.uuid} updated successfully`,
       data: {
-        currentTodo,
-        updatedTodo
+        currentCategory,
+        updatedCategory
       }
     })
   } catch (e) {
     sendResponse(res, res.statusCode, {
       success: false,
-      message: "Todo failed to be updated",
+      message: "Category failed to be updated",
       error: {
         errors: e
       }
@@ -102,18 +92,18 @@ export const update = async (req: Request, res: Response) => {
 
 export const remove = async (req: Request, res: Response) => {
   try {
-    await todoService.deleteTodo(req.params.uuid);
+    await categoryService.deleteCategory(req.params.uuid);
     sendResponse(res, 200, {
       success: true,
-      message: "Todo deleted successfully",
+      message: "Category deleted successfully",
     })
   } catch (e) {
     sendResponse(res, res.statusCode, {
       success: false,
-      message: "Todo failed to be deleted",
+      message: "Category failed to be deleted",
       error: {
         errors: e
       }
     })
   }
-} 
+}
