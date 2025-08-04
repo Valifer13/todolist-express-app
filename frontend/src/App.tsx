@@ -3,6 +3,7 @@ import DefaultLayout from './layouts/DefaultLayout';
 import Landing from './pages/Landing';
 import RegisterForm from './pages/Auth/RegisterForm';
 import LoginForm from './pages/Auth/LoginForm';
+import Todo from './pages/Todo/Todo';
 
 type User = {
   id: number;
@@ -21,7 +22,7 @@ function App() {
         <Route path="/register" element={<RegisterForm />} />
         <Route path='/' element={<DefaultLayout />}>
           <Route index element={<Landing />} />
-          <Route path="/todos" element={<h1>Todolist Page</h1>} />
+          <Route path="/todos" element={<Todo />} />
           <Route path="/categories" element={<h1>Categories Page</h1>} />
           <Route path="/users" element={<h1>Peoples Page</h1>} />
         </Route>
