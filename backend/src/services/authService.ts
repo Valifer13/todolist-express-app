@@ -46,7 +46,6 @@ export const loginUserService = async (
     id: user.id,
     role: "user",
     issuedAt: Date.now(),
-    userAgent: req.headers["user-agent"],
   };
 
   const accessToken = generateAccessToken(payload);
@@ -56,8 +55,6 @@ export const loginUserService = async (
     data: {
       userId: user.id,
       ipAddress: req.ip || "",
-      userAgent: req.get("User-Agent") || "",
-      payload: encodePayload(payload),
       refreshToken,
       expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
     },
@@ -96,7 +93,6 @@ export const refreshTokenService = async (req: Request, token: string) => {
     id: session.user.id,
     role: "user",
     issuedAt: Date.now(),
-    userAgent: req.headers["user-agent"],
   };
 
   return generateAccessToken(payload);
