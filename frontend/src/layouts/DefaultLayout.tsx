@@ -5,7 +5,7 @@ export default function DefaultLayout() {
 	return (
 		<div className="flex">
 			<Navbar />
-			<div className="min-h-screen max-w-[1920px]">
+			<div className="min-h-screen w-full">
 				<Outlet />
 			</div>
 		</div>

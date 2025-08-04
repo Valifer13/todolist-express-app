@@ -6,3 +6,9 @@ export function FormInput({ type, formLabel, formTarget, setTarget }: { type: st
         </div>
     )
 }
+
+export function Input({ type, classes, placeholder, setTarget }: { type: string, classes?: string, placeholder: string, setTarget: (value: string) => void }) {
+    return (
+        <input type={type} className={`bg-zinc-50 border-[1px] border-zinc-300 px-3 p-2 ${classes}`} placeholder={placeholder} onChange={(e) => setTarget(e.target.value)} />
+    )
+}
