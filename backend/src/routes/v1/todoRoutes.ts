@@ -22,7 +22,8 @@ todoRouter.post('/todos',
       .trim()
       .escape(),
     body("dueDate")
-      .isDate(),
+      .notEmpty().withMessage("Due date must be not empty")
+      .isISO8601().withMessage("Due date must be a valid date"),
     body("priority")
       .notEmpty()
       .trim()

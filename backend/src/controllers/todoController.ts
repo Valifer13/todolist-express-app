@@ -44,6 +44,8 @@ export const create = async (req: Request, res: Response) => {
       userId: req.user.id
     })
 
+    console.log("Todo created successfully:", todo);
+
     sendResponse(res, 201, {
       success: true,
       message: "New todo created",

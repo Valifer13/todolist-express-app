@@ -23,9 +23,17 @@ export const getAllTodoByUserId = async (id: number) => {
 };
 
 export const createTodo = async (data: TodoType) => {
-  return prisma.todo.create({
-    data,
-  });
+  console.log("Creating todo with data:", data);
+
+  try {
+    const todo = await prisma.todo.create({
+      data,
+    });
+    console.log("Todo created successfully:", todo);
+    return todo;
+  } catch (error) {
+    throw new Error(`Failed to create todo: ${error}`);
+  }
 };
 
 export const createManyTodo = async (data: TodoType[]) => {

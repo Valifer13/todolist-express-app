@@ -3,7 +3,6 @@ import { generateAccessToken, generateRefreshToken } from "../utils/token";
 import * as userModel from "../models/userModel";
 import prisma from "../prisma/client";
 import { Request } from "express";
-import { encodePayload } from "../utils/encodeDecode";
 
 export const registerUserService = async (data: {
   username: string;
