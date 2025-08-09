@@ -1,28 +1,19 @@
 import { useEffect, useState } from "react";
 import fetchWithAuth from "../../helpers/fetchWithAuth";
 import { Button } from "../../components/Button";
-import { Input } from "../../components/Input";
-
-type Priority = 'LOW' | 'MEDIUM' | 'HIGH';
-type Status = 'PENDING' | 'COMPLETE' | 'IN_PROGRESS' | 'CANCELED';
-
-type TodoProps = {
-    id: number;
-    name: string;
-    uuid: string;
-    description: string;
-    status: Status;
-    dueDate: string;
-    priority: Priority;
-    createdAt: string;
-    updatedAt: string;
-    userId: number;
-    categoryId: number;
-}
+import { FormInput, Input, InputSelect, TextareaInput } from "../../components/Input";
+import TodoCard from "../../components/Todo/TodoCard";
+import type { TodoProps } from "../../lib/stores";
 
 export default function Todo() {
     const [todos, setTodos] = useState<TodoProps[]>([]);
     const [searchQuery, setSearchQuery] = useState('');
+    const [modalOpen, setModalOpen] = useState(false);
+    const [todoTitle, setTodoTitle] = useState('');
+    const [description, setDescription] = useState('');
+    const [dueDate, setDueDate] = useState('');
+    const [priority, setPriority] = useState<Priority | string>('LOW');
+    const [status, setStatus] = useState<Status | string>('PENDING');
 
     async function fetchTodos() {
         const response = await fetchWithAuth('/todos');
@@ -30,6 +21,41 @@ export default function Todo() {
             const data = await response.json();
             console.log(data.data.todos);
             setTodos(data.data.todos);
+        }
+    }
+
+    async function addTodo(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        try {
+            const response = await fetchWithAuth('/todos', {
+                method: 'POST',
+                body: JSON.stringify({
+                    name: todoTitle,
+                    description,
+                    dueDate: new Date(dueDate),
+                    priority,
+                    status,
+                    categoryId: null, // Assuming categoryId is optional
+                })
+            })
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const result = await response.json();
+            console.log('Todo added successfully:', result);
+            alert('Todo added successfully!');
+
+            setModalOpen(false);
+            setTodoTitle('');
+            setDescription('');
+            setDueDate('');
+            setPriority('LOW');
+            setStatus('PENDING');
+        } catch (error) {
+            console.error('Error adding todo:', error);
         }
     }
 
@@ -45,24 +71,29 @@ export default function Todo() {
                     <Input type="text" placeholder="🔍 Search todo..." setTarget={setSearchQuery} classes="rounded-s-sm" />
                     <Button type="submit" title="Search" className="w-fit rounded-s-none" />
                 </form>
-                <Button type="button" title="+ Add Todo" className="w-fit" />
+                <button className="p-2 bg-zinc-200 hover:bg-zinc-300 cursor-pointer border border-zinc-400 rounded-md" onClick={() => setModalOpen(!modalOpen)}>+ Add Todo</button>
             </div>
-            <div className="grid grid-cols-3 gap-3 *:bg-zinc-50 *:rounded-md *:border-zinc-300 *:border-[1px] *:p-4 *:w-full **:transition-all **:duration-300">
-                {todos.map((todo, i) => (
-                    <div key={i} className="grid gap-2 group/due-date">
-                        <div className="flex w-full justify-between items-center">
-                            <div className="bg-blue-200 hover:bg-blue-300 px-3 py-1 rounded-md text-xs font-medium cursor-pointer">{todo.priority}</div>
-                            <div className="py-1 px-2 rounded-sm bg-zinc-200 hover:bg-zinc-300 text-center cursor-pointer">•••</div>
-                        </div>
-                        <a href="#" className="text-xl font-medium text-black hover:text-zinc-700">{todo.name}</a>
-                        <p className="text-zinc-600">{todo.description}</p>
-                        <div className="flex w-full justify-between items-center *:text-zinc-500">
-                            <div className="group-hover/due-date:w-full w-0 h-[1px] bg-zinc-500 relative top-0.5"></div>
-                            <p className="bg-inherit ps-2">{todo.dueDate || 'unknown'}</p>
-                        </div>
-                    </div>
-                ))}
+            <div className="grid grid-cols-3 gap-3">
+                {todos.map((todo, i) => <TodoCard data={todo} key={i} /> )}
             </div>
+
+            {modalOpen && (
+                <div className="fixed flex inset-0 justify-center items-center bg-[rgba(0,0,0,.3)] z-50">
+                    <form onSubmit={addTodo} action='/api/v1/todos' method="post" className="w-fit p-4 rounded-md bg-white flex flex-col gap-3">
+                        <h1 className="text-xl font-medium min-w-xs">Add New Todolist</h1>
+                        <FormInput type="text" setTarget={setTodoTitle} formLabel="Name" name="name" />
+                        <TextareaInput name="description" formLabel="Description" rows={4} cols={50} placeholder="Description..." setTarget={setDescription} />
+                        <InputSelect name="status" formLabel="Status" options={['PENDING', 'IN_PROGRESS', 'COMPLETE', 'CANCELED']} setTarget={setStatus} />
+                        <FormInput type="date" setTarget={setDueDate} formLabel="Due Date" name="dueDate" />
+                        <InputSelect name="priority" formLabel="Priority" options={['LOW', 'MEDIUM', 'HIGH']} setTarget={setPriority} />
+                        {/* <DatalistInput name="category" formLabel="Category" options={['Work', 'Personal', 'Urgent']} setTarget={() => {}} /> */}
+                        <div className="flex justify-end gap-2 mt-4">
+                            <Button title="Cancel" setTarget={setModalOpen} targetValue={modalOpen} />
+                            <Button title="Submit" type="submit" variants="primary" />
+                        </div>
+                    </form>
+                </div>
+            )}
         </div>
     )
 }

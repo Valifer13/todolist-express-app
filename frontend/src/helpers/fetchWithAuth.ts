@@ -8,6 +8,8 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
     };
+    
+    console.log('Options url: ', options.body);
 
     let response = await fetch(`/api/v1${url}`, {
         ...options,
@@ -46,7 +48,7 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
                 localStorage.removeItem('token');
                 localStorage.removeItem('refresh-token');
                 window.location.href = '/login';
-                return;
+                return response;
             }
         }
     }
