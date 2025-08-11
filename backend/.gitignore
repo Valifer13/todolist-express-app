@@ -6,4 +6,5 @@ pnpm-workspace.yaml
 .env
 request.rest
 /src/generated/prisma
+/prisma/migrations
 task.txt
