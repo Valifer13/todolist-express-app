@@ -50,6 +50,7 @@ export default function RegisterForm() {
                 <FormInput type="password" formLabel="Password" formTarget="password" setTarget={setPassword} />
                 <FormInput type="password" formLabel="PasswordConfirm" formTarget="password" setTarget={setPasswordConfirm} />
                 <Button type="submit" title="Register" variants="primary" />
+                <p className="text-sm text-zinc-400">Already have account? <a href="/login" className="text-zinc-500 hover:text-zinc-800 hover:underline">Login</a></p>
             </form>
         </div>
     )

@@ -29,7 +29,6 @@ export default function LoginForm() {
             }
 
             const result = await response.json();
-            console.log('Login successful:', result);
 
             localStorage.setItem('token', result.data.tokens.accessToken);
             localStorage.setItem('refresh-token', result.data.tokens.refreshToken);
@@ -49,6 +48,7 @@ export default function LoginForm() {
                 <FormInput type="email" formLabel="Email" formTarget="email" setTarget={setEmail} />
                 <FormInput type="password" formLabel="Password" formTarget="password" setTarget={setPassword} />
                 <Button type="submit" title="Login" variants="primary" />
+                <p className="text-sm text-zinc-400">Doesn't have account? <a href="/register" className="text-zinc-500 hover:text-zinc-800 hover:underline">Register</a></p>
             </form>
         </div>
     )

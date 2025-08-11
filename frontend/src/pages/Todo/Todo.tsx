@@ -3,7 +3,7 @@ import fetchWithAuth from "../../helpers/fetchWithAuth";
 import { Button } from "../../components/Button";
 import { FormInput, Input, InputSelect, TextareaInput } from "../../components/Input";
 import TodoCard from "../../components/Todo/TodoCard";
-import type { TodoProps } from "../../lib/stores";
+import type { TodoProps, TodoPriority, TodoStatus } from "../../lib/stores";
 
 export default function Todo() {
     const [todos, setTodos] = useState<TodoProps[]>([]);
@@ -12,8 +12,8 @@ export default function Todo() {
     const [todoTitle, setTodoTitle] = useState('');
     const [description, setDescription] = useState('');
     const [dueDate, setDueDate] = useState('');
-    const [priority, setPriority] = useState<Priority | string>('LOW');
-    const [status, setStatus] = useState<Status | string>('PENDING');
+    const [priority, setPriority] = useState<TodoPriority | string>('LOW');
+    const [status, setStatus] = useState<TodoStatus | string>('PENDING');
 
     async function fetchTodos() {
         const response = await fetchWithAuth('/todos');
@@ -54,6 +54,8 @@ export default function Todo() {
             setDueDate('');
             setPriority('LOW');
             setStatus('PENDING');
+
+            await fetchTodos();
         } catch (error) {
             console.error('Error adding todo:', error);
         }

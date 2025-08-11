@@ -1,15 +1,15 @@
-export type Priority = 'LOW' | 'MEDIUM' | 'HIGH';
+export type TodoPriority = 'LOW' | 'MEDIUM' | 'HIGH';
 
-export type Status = 'PENDING' | 'COMPLETE' | 'IN_PROGRESS' | 'CANCELED';
+export type TodoStatus = 'PENDING' | 'COMPLETE' | 'IN_PROGRESS' | 'CANCELED';
 
 export type TodoProps = {
     id: number;
     name: string;
     uuid: string;
     description: string;
-    status: Status;
+    status: TodoStatus;
     dueDate: string;
-    priority: Priority;
+    priority: TodoPriority;
     createdAt: string;
     updatedAt: string;
     userId: number;
